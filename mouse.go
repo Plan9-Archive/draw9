@@ -63,6 +63,15 @@ func (m *Mouse) Mb3() bool {
 	return m.buttons == 4
 }
 
+// Any returns true if any mouse button is down.
+func (m *Mouse) Any() bool {
+	return m.buttons & 7 > 0
+}
+
+func (m *Mouse) Buttons() int {
+	return m.buttons
+}
+
 // ScrollUp returns true if the scroll wheel went up.
 func (m *Mouse) ScrollUp() bool {
 	return m.buttons == 8
