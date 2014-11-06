@@ -114,14 +114,12 @@ func cachechars(f *Font, in *input, cp []uint16, max int) (n, wid int, subfontna
 
 Loop:
 	for ; i < max && !in.done; in.next() {
-		//println("cachechars", i < max, in.done)
 		r := in.ch
 		var (
 			c, tc              *cacheinfo
 			a                  uint32
 			sh, esh, h, th, ld int
 		)
-		//println("LOOP", r)
 
 		sh = (17 * int(r)) & (len(f.cache) - NFLOOK - 1)
 		esh = sh + NFLOOK
@@ -177,7 +175,6 @@ Loop:
 		c = &f.cache[h]
 
 	Found:
-		//println("FOUND")
 		wid += int(c.width)
 		c.age = f.age
 		cp[i] = uint16(h)
@@ -231,6 +228,7 @@ func cf2subfont(cf *cachefont, f *Font) (*Subfont, error) {
 		} else {
 			depth = 8
 		}
+
 		name = subfontname(cf.name, f.Name, depth)
 		if name == "" {
 			return nil, fmt.Errorf("unknown subfont")
@@ -250,6 +248,7 @@ func loadchar(f *Font, r rune, c *cacheinfo, h int, noflush bool) (int, string) 
 		cf                      *cachefont
 		subf                    *cachesubf
 		b                       []byte
+		err			error
 	)
 
 	pic = r
@@ -299,7 +298,10 @@ Found:
 
 	subf.age = 0
 	subf.cf = nil
-	subf.f, _ = cf2subfont(cf, f)
+	subf.f, err = cf2subfont(cf, f)
+	if err != nil {
+		//log.Printf("ERROR: %v\n", err.Error())
+	}
 	if subf.f == nil {
 		if cf.subfontname == "" {
 			goto TryPJW

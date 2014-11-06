@@ -3,6 +3,7 @@ package draw9
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -15,15 +16,18 @@ func subfontname(cfname, fname string, maxdepth int) string {
 	if cfname == "*default*" {
 		return t
 	}
+	if strings.HasPrefix(t, ".") {
+		fdir := filepath.Dir(fname)
+		ffile := filepath.Base(fname)
+
+		ffile = strings.Replace(ffile, "unicode.", "", 1)
+		ffile = strings.Replace(ffile, ".font", "", 1)
+		
+		t = filepath.Join(fdir, ffile) + t
+	}
 	if !strings.HasPrefix(t, "/") {
-		dir := fname
-		i := strings.LastIndex(dir, "/")
-		if i >= 0 {
-			dir = dir[:i]
-		} else {
-			dir = "."
-		}
-		t = dir + "/" + t
+		dir := filepath.Dir(fname)
+		t = filepath.Join(dir, t)
 	}
 	if maxdepth > 8 {
 		maxdepth = 8
